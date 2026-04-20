@@ -1,0 +1,30 @@
+class Solution(object):
+    def countDigitOne(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+        if n <= 0: return 0
+        
+        count = 0
+        i = 1
+        while i <= n:
+            divider = i * 10
+            # Calculate prefix, current digit, and suffix
+            prefix = n // divider
+            curr = (n // i) % 10
+            suffix = n % i
+            
+            if curr == 0:
+                count += prefix * i
+            elif curr == 1:
+                count += prefix * i + (suffix + 1)
+            else:
+                count += (prefix + 1) * i
+            
+            # Move to the next power of 10
+            i *= 10
+            
+        return count
+
+        
