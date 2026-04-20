@@ -1,0 +1,31 @@
+class Solution(object):
+    def findKthNumber(self, n, k):
+        curr = 1
+        k -= 1  # We start at 1, so we need to find k-1 more steps
+        
+        while k > 0:
+            # 1. Calculate how many numbers are in the subtree of 'curr'
+            steps = self.count_steps(n, curr, curr + 1)
+            
+            if steps <= k:
+                # 2. Skip this subtree and move to the next neighbor (e.g., 1 -> 2)
+                curr += 1
+                k -= steps
+            else:
+                # 3. Go deeper into the current subtree (e.g., 1 -> 10)
+                curr *= 10
+                k -= 1
+                
+        return curr
+
+    def count_steps(self, n, n1, n2):
+        steps = 0
+        while n1 <= n:
+            # Count nodes at the current level, capped by n
+            steps += min(n + 1, n2) - n1
+            # Move down to the next level of the 10-ary tree
+            n1 *= 10
+            n2 *= 10
+        return steps
+
+        
