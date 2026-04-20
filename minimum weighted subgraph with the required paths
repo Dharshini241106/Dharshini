@@ -1,0 +1,37 @@
+import heapq
+from collections import defaultdict
+
+class Solution(object):
+    def minimumWeight(self, n, edges, src1, src2, dest):
+        # 1. Build original and reversed adjacency lists
+        adj = defaultdict(list)
+        rev_adj = defaultdict(list)
+        for u, v, w in edges:
+            adj[u].append((v, w))
+            rev_adj[v].append((u, w))
+            
+        def dijkstra(start_node, graph):
+            dist = [float('inf')] * n
+            dist[start_node] = 0
+            pq = [(0, start_node)]
+            while pq:
+                d, u = heapq.heappop(pq)
+                if d > dist[u]: continue
+                for v, w in graph[u]:
+                    if dist[u] + w < dist[v]:
+                        dist[v] = dist[u] + w
+                        heapq.heappush(pq, (dist[v], v))
+            return dist
+
+        # 2. Run Dijkstra from the three key points
+        d1 = dijkstra(src1, adj)
+        d2 = dijkstra(src2, adj)
+        dd = dijkstra(dest, rev_adj)
+        
+        # 3. Find the intermediate node 'i' that minimizes the total weight
+        ans = float('inf')
+        for i in range(n):
+            if d1[i] != float('inf') and d2[i] != float('inf') and dd[i] != float('inf'):
+                ans = min(ans, d1[i] + d2[i] + dd[i])
+                
+        return ans if ans != float('inf') else -1
