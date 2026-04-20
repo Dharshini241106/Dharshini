@@ -1,0 +1,39 @@
+import heapq
+from collections import defaultdict
+
+class Graph(object):
+
+    def __init__(self, n, edges):
+        self.n = n
+        self.adj = defaultdict(list)
+        for u, v, w in edges:
+            self.adj[u].append((v, w))
+
+    def addEdge(self, edge):
+        u, v, w = edge
+        self.adj[u].append((v, w))
+
+    def shortestPath(self, node1, node2):
+        # Min-priority queue stores (distance_to_node, current_node)
+        pq = [(0, node1)]
+        # Use a list for distances to track the shortest path to each node
+        distances = [float('inf')] * self.n
+        distances[node1] = 0
+        
+        while pq:
+            d, u = heapq.heappop(pq)
+            
+            # If we reached the target, return the distance immediately
+            if u == node2:
+                return d
+            
+            # If we found a longer path than already recorded, skip it
+            if d > distances[u]:
+                continue
+                
+            for v, weight in self.adj[u]:
+                if d + weight < distances[v]:
+                    distances[v] = d + weight
+                    heapq.heappush(pq, (distances[v], v))
+                    
+        return -1 if distances[node2] == float('inf') else distances[node2]
